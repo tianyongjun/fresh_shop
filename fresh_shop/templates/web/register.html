@@ -1,0 +1,77 @@
+
+{% extends  'web/base_main.html' %}
+
+{% block ticle %}
+    天天生鲜-注册
+{% endblock %}
+
+{% block extJs %}
+    {{ block.super }}
+    {% load static %}
+	<script type="text/javascript" src="{% static 'web/js/register.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    {% load static %}
+	<div class="register_con">
+		<div class="l_con fl">
+			<a class="reg_logo" href="{% url 'home:index' %}"><img src="{% static 'web/images/logo02.png' %}"></a>
+			<div class="reg_slogan">足不出户  ·  新鲜每一天</div>
+			<div class="reg_banner"></div>
+		</div>
+
+		<div class="r_con fr">
+			<div class="reg_title clearfix">
+				<h1>用户注册</h1>
+				<a href="{% url 'users:login' %}">登录</a>
+			</div>
+			<div class="reg_form clearfix">
+				<form action="" method="post">
+                {% csrf_token %}
+				<ul>
+					<li>
+						<label>用户名:</label>
+						<input type="text" name="username" id="user_name" value="{{ data.username }}">
+						<span class="error_tip" {% if form.errors.username %} style="display: inline;" {% endif %}>
+                            {{ form.errors.username }}
+                        </span>
+					</li>					
+					<li>
+						<label>密码:</label>
+						<input type="password" name="password" id="pwd" value="{{ data.password }}">
+						<span class="error_tip" {% if form.errors.password %} style="display: inline;" {% endif %}>
+                            {{ form.errors.password }}
+                        </span>
+					</li>
+					<li>
+						<label>确认密码:</label>
+						<input type="password" name="password2" id="cpwd" value="{{ data.password2 }}">
+						<span class="error_tip" {% if form.errors.password2 %} style="display: inline;" {% endif %}>
+                            {{ form.errors.password2 }}
+                        </span>
+					</li>
+					<li>
+						<label>邮箱:</label>
+						<input type="text" name="email" id="email" value="{{ data.email }}">
+						<span class="error_tip" {% if form.errors.email %} style="display: inline;" {% endif %}>
+                            {{ form.errors.email }}
+                        </span>
+					</li>
+					<li class="agreement">
+						<input type="checkbox" name="allow" id="allow" checked="checked">
+						<label>同意”天天生鲜用户使用协议“</label>
+						<span class="error_tip2" {% if form.errors.allow %} style="display: inline;" {% endif %}>
+                            {{ form.errors.allow }}
+                        </span>
+					</li>
+					<li class="reg_sub">
+						<input type="submit" value="注 册" name="">
+					</li>
+				</ul>				
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+{% endblock %}
