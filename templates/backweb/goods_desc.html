@@ -31,7 +31,9 @@
                         <span class="item_name" style="width:120px;">产品详情：</span>
                         <label style="display:inline-block;padding:15px;background:#f8f8f8;">
                             <textarea id="editor_id" name="content" style="width:700px;height:300px;">
-                                &lt;strong&gt;HTML内容&lt;/strong&gt;
+                                {% if goods.goods_desc %}
+                                    {{ goods.goods_desc }}
+                                {% endif %}
                             </textarea>
                         </label>
                     </li>
