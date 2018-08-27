@@ -16,11 +16,24 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 
+from django.contrib.staticfiles.urls import static
+
+from fresh_shop import settings
 from home import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # 用户地址
     path('users/', include(('users.urls', 'users'), namespace='users')),
+    # 商品地址
+    path('goods/', include(('goods.urls', 'goods'), namespace='goods')),
+    # 生鲜前台地址
     path('home/', include(('home.urls', 'home'), namespace='home')),
+    # 生鲜后台地址
+    path('backweb/', include(('backweb.urls', 'backweb'), namespace='backweb')),
+    # 访问生鲜首页地址
     re_path(r'^$', views.Index.as_view()),
 ]
+
+# 配置media访问路径
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -13,9 +13,7 @@ class GoodsCategory(models.Model):
         (5, '新鲜蔬菜'),
         (6, '速冻食品'),
     )
-    desc = models.TextField(default='', help_text='类别描述', verbose_name='类别描述')
     category_type = models.IntegerField(choices=CATEGORY_TYPE, help_text='类目级别', verbose_name='类目级别')
-    add_time = models.DateTimeField(auto_now_add=True, verbose_name='添加时间')
 
     class Meta:
         db_table = 'f_goods_category'
