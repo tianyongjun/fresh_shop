@@ -33,7 +33,7 @@
                 <th>操作</th>
             </tr>
             {% csrf_token %}
-            {% for good in goods %}
+            {% for good in page %}
                 <tr>
                     <td class="center"><img src="/media/{{ good.goods_front_image }}" width="50" height="50" alt="" /></td>
                     <td class="center">{{ good.name }}</td>
@@ -90,13 +90,12 @@
             {% endfor %}
         </table>
         <aside class="paging">
-            <a>第一页</a>
-            <a>1</a>
-            <a>2</a>
-            <a>3</a>
-            <a>…</a>
-            <a>1004</a>
-            <a>最后一页</a>
+            <a>当前{{ page.number }}页</a>
+            <a href="{% url 'goods:goods_list' %}">第一页</a>
+            {% for i in page.paginator.page_range %}
+                <a href="{% url 'goods:goods_list' %}?page={{ i }}"> {{ i }} </a>
+            {% endfor %}
+            <a href="{% url 'goods:goods_list' %}?page={{ page.paginator.num_pages }}">最后一页</a>
         </aside>
     </div>
 </section>

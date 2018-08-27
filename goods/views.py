@@ -1,7 +1,9 @@
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
+from fresh_shop.settings import PAGE_NUMBER
 from goods.forms import GoodsForm
 from goods.models import GoodsCategory, Goods
 
@@ -9,9 +11,15 @@ from goods.models import GoodsCategory, Goods
 class GoodsList(View):
     def get(self, request, *args, **kwargs):
         # 判断如果是get请求，则返回首页
-        goods = Goods.objects.all()
+        try:
+            page = request.GET.get('page', 1)
+        except:
+            page = 1
         goods_categorys = GoodsCategory.CATEGORY_TYPE
-        return render(request, 'backweb/goods_list.html', {'goods': goods, 'goods_categorys': goods_categorys})
+        goods = Goods.objects.all()
+        paginator = Paginator(goods, PAGE_NUMBER)
+        page = paginator.page(page)
+        return render(request, 'backweb/goods_list.html', {'page': page, 'goods_categorys': goods_categorys})
 
 
 class GoodsDetail(View):
@@ -48,14 +56,14 @@ class GoodsEdit(View):
         if form.is_valid():
             # 创建商品信息
             goods_data = form.cleaned_data
-            if goods_data.get('goods_front_image'):
-                goods_front_image = goods_data.pop('goods_front_image')
+            goods_front_image = goods_data.pop('goods_front_image')
+            if goods_front_image:
                 # 保存修改的图片, 如果使用update()更新，则保存的图片地址图片名称
                 goods = Goods.objects.get(id=kwargs['id'])
                 goods.goods_front_image = goods_front_image
                 goods.save()
             # 保存修改的商品信息
-            Goods.objects.update(**goods_data)
+            Goods.objects.filter(id=kwargs['id']).update(**goods_data)
             # 创建成功，则跳回商品列表页面
             return redirect('goods:goods_list')
         else:

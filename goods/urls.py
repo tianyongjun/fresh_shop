@@ -4,7 +4,7 @@ from django.urls import path
 from goods import views
 
 urlpatterns = [
-    # 首页
+    # 商品列表页面
     path('goods_list/', views.GoodsList.as_view(), name='goods_list'),
     # 商品添加
     path('goods_detail/', views.GoodsDetail.as_view(), name='goods_detail'),
