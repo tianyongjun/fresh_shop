@@ -41,3 +41,15 @@ class GoodsDelete(View):
         Goods.objects.filter(id=kwargs['id']).delete()
         return JsonResponse({'code': 200, 'msg': '请求成功'})
 
+
+class GoodsDesc(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'backweb/goods_desc.html')
+
+    def post(self, request, *args, **kwargs):
+        # 获取删除的商品id，查询数据，使用delete()方法删除
+        content = request.POST.get('content')
+        goods = Goods.objects.filter(id=kwargs['id']).first()
+        goods.goods_desc = content
+        goods.save()
+        return redirect('goods:goods_list')

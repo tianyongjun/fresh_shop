@@ -33,8 +33,7 @@ class Goods(models.Model):
     market_price = models.FloatField(default=0, verbose_name='市场价格')
     shop_price = models.FloatField(default=0, verbose_name='本店价格')
     goods_brief = models.CharField(max_length=500, verbose_name='商品简短描述')
-    # goods_desc = UEditorField(width=100, height=300, filePath='goods/files/', imagePath='goods/images/',
-    #                           default='', verbose_name='内容')
+    goods_desc = models.TextField(null=True)
     ship_free = models.BooleanField(default=True, verbose_name='是否承担运费')
     goods_front_image = models.ImageField(upload_to='goods/images/', null=True, blank=True, verbose_name='封面图')
     is_new = models.BooleanField(default=False, verbose_name='是否新品')

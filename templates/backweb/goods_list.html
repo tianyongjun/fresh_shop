@@ -29,6 +29,7 @@
                 <th>新品</th>
                 <th>热销</th>
                 <th>库存</th>
+                <th>详情</th>
                 <th>操作</th>
             </tr>
             {% csrf_token %}
@@ -62,9 +63,12 @@
                     </td>
                     <td class="center">{{ good.goods_nums }}</td>
                     <td class="center">
-                    <a href="http://www.mycodes.net" title="预览" class="link_icon" target="_blank">&#118;</a>
-                    <a href="product_detail.html" title="编辑" class="link_icon">&#101;</a>
-                    <a onclick="delete_goods({{ good.id }})" title="删除" class="link_icon">&#100;</a>
+                        <a href="{% url 'goods:goods_desc' good.id %}">{{ good.name }}描述</a>
+                    </td>
+                    <td class="center">
+                        <a href="http://www.mycodes.net" title="预览" class="link_icon" target="_blank">&#118;</a>
+                        <a href="product_detail.html" title="编辑" class="link_icon">&#101;</a>
+                        <a onclick="delete_goods({{ good.id }})" title="删除" class="link_icon">&#100;</a>
                     </td>
                     <script type="text/javascript">
                         function delete_goods(goods_id){

@@ -21,6 +21,8 @@ from django.contrib.staticfiles.urls import static
 from fresh_shop import settings
 from home import views
 
+from utils.upload_image import upload_image
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # 用户地址
@@ -33,7 +35,11 @@ urlpatterns = [
     path('backweb/', include(('backweb.urls', 'backweb'), namespace='backweb')),
     # 访问生鲜首页地址
     re_path(r'^$', views.Index.as_view()),
+    # kindeditor编辑器上传图片地址
+    re_path(r'^util/upload/(?P<dir_name>[^/]+)$', upload_image, name='upload_image'),
 ]
 
 # 配置media访问路径
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
