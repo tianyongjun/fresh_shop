@@ -63,11 +63,19 @@
                         {% if form.errors.market_price %}
                             <span class="errorTips">{{ form.errors.market_price|striptags }}</span>
                         {% endif %}
-                    </li><li>
+                    </li>
+                    <li>
                         <span class="item_name" style="width:120px;">本店价格：</span>
                         <input type="text" name="shop_price" value="{{ goods.shop_price }}" class="textbox textbox_295" placeholder="本店价格..."/>
                         {% if form.errors.shop_price %}
                             <span class="errorTips">{{ form.errors.shop_price|striptags }}</span>
+                        {% endif %}
+                    </li>
+                    <li>
+                        <span class="item_name" style="width:120px;">商品简短描述：</span>
+                        <input type="text" name="goods_brief" value="{{ goods.goods_brief }}" class="textbox textbox_295" placeholder="商品简短描述..."/>
+                        {% if form.errors.goods_brief %}
+                            <span class="errorTips">{{ form.errors.goods_brief|striptags }}</span>
                         {% endif %}
                     </li>
                     <li>

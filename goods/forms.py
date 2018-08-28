@@ -21,6 +21,8 @@ class GoodsForm(forms.Form):
                                     error_messages={'required': '本店价格必填',
                                                     'invalid': '本店价格为整型'})
     goods_front_image = forms.ImageField(required=False)
+    goods_brief = forms.CharField(required=False,
+                                  error_messages={'required': '商品简短描述必填'})
 
     def clean_category(self, *args, **kwargs):
         category = self.cleaned_data.get('category')
