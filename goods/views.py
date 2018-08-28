@@ -93,3 +93,33 @@ class GoodsDesc(View):
         return redirect('goods:goods_list')
 
 
+class GoodsCategoryList(View):
+
+    def get(self, request, *args, **kwargs):
+        # 获取所有的商品分类
+        goods_category = GoodsCategory.objects.all()
+        # 给页面传递商品分类的枚举值
+        categorys = GoodsCategory.CATEGORY_TYPE
+        return render(request, 'backweb/goods_category_list.html',
+                      {'goods_category': goods_category, 'categorys': categorys})
+
+
+class GoodsCategoryEditor(View):
+
+    def get(self, request, *args, **kwargs):
+        # 获取某个商品分类的信息，返给页面
+        goods_category = GoodsCategory.objects.filter(id=kwargs['id']).first()
+        # 给页面传递商品分类的枚举值
+        categorys = GoodsCategory.CATEGORY_TYPE
+        return render(request, 'backweb/goods_category_detail.html',
+                      {'goods_category': goods_category, 'categorys': categorys})
+
+    def post(self, request, *args, **kwargs):
+        # 获取商品类型的封面图
+        category_front_image = request.FILES.get('category_front_image')
+        # 判断商品的封面图是否上传，如果上传了，则进行修改，否则直接跳转到商品分类的页面
+        if category_front_image:
+            goods_category = GoodsCategory.objects.filter(id=kwargs['id']).first()
+            goods_category.category_front_image = category_front_image
+            goods_category.save()
+        return redirect('goods:goods_category_list')

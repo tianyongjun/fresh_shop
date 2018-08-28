@@ -113,7 +113,7 @@
             <div class="list_title clearfix">
                 <h3 class="fl" id="model01">
                     {% for category in goods_categorys %}
-                        {% if category.0 == goods.category.category_type %}
+                        {% if category.0 == value.0.category.category_type %}
                             {{ category.1 }}
                         {% endif %}
                     {% endfor %}
@@ -128,12 +128,12 @@
             </div>
 
             <div class="goods_con clearfix">
-                <div class="goods_banner fl"><img src="{% static 'web/images/banner01.jpg' %}"></div>
+                <div class="goods_banner fl"><img src="/media/{{ value.0.category.category_front_image }}"></div>
                 <ul class="goods_list fl">
                     {% for good in value %}
                         <li>
-                            <h4><a href="#">{{ good.name }}</a></h4>
-                            <a href="#"><img src="/media/{{ good.goods_front_image }}"></a>
+                            <h4><a href="{% url 'home:goods_detail' good.id %}">{{ good.name }}</a></h4>
+                            <a href="{% url 'home:goods_detail' good.id %}"><img src="/media/{{ good.goods_front_image }}"></a>
                             <div class="prize">¥ {{ good.shop_price }}</div>
                         </li>
                     {% endfor %}

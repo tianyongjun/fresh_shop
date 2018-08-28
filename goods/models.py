@@ -14,6 +14,7 @@ class GoodsCategory(models.Model):
         (6, '速冻食品'),
     )
     category_type = models.IntegerField(choices=CATEGORY_TYPE, help_text='类目级别', verbose_name='类目级别')
+    category_front_image = models.ImageField(upload_to='goods/images/', null=True, blank=True, verbose_name='封面图')
 
     class Meta:
         db_table = 'f_goods_category'
