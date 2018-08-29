@@ -17,7 +17,8 @@ class AuthMiddleware(MiddlewareMixin):
         # 不需要验证url地址
         not_need_login = ['/home/index/', '/goods/goods_detail/(.*)','/users/login/',
                           '/users/register/', '/media/(.*)', '/static/(.*)',
-                          '/shopping/add_cart/', '/shopping/cart/']
+                          '/shopping/add_cart/', '/shopping/cart/', '/shopping/total_price/',
+                          '/shopping/change_cart_goods_select/']
         # 获取当前访问url的地址
         path = request.path
         # 当访问首页的时候，不需要做登录验证的处理

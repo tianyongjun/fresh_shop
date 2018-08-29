@@ -12,6 +12,7 @@ class ShoppingCart(models.Model):
     goods = models.ForeignKey(Goods, verbose_name='商品', on_delete=models.CASCADE)
     nums = models.IntegerField(default=0, verbose_name='数量')
     add_time = models.DateTimeField(auto_now_add=True, verbose_name='添加时间')
+    is_select = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'f_shopping_cart'

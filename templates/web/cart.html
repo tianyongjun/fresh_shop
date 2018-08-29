@@ -7,7 +7,7 @@
 
 {% block content %}
 
-	<div class="total_count">全部商品<em>2</em>件</div>	
+	<div class="total_count">全部商品<em>{{ shop_carts|length }}</em>件</div>
 	<ul class="cart_list_th clearfix">
 		<li class="col01">商品名称</li>
 		<li class="col02">商品单位</li>
@@ -16,31 +16,110 @@
 		<li class="col05">小计</li>
 		<li class="col06">操作</li>
 	</ul>
+    {% csrf_token %}
 	{% for goods in shop_carts %}
 
 		<ul class="cart_list_td clearfix">
-			<li class="col01"><input type="checkbox" name="" checked></li>
-			<li class="col02"><img src="/media/{{ goods.goods_front_image }}"></li>
-			<li class="col03">{{ goods.name }}<br><em>{{ goods.shop_price }}元/500g</em></li>
+			<li class="col01"><input onchange="change_cart_goods_select({{ goods.id }})" type="checkbox" name=""{% if goods.is_select %} checked {% endif %}></li>
+			<li class="col02"><img src="/media/{{ goods.goods.goods_front_image }}"></li>
+			<li class="col03">{{ goods.goods.name }}<br><em>{{ goods.goods.shop_price }}元/500g</em></li>
 			<li class="col04">500g</li>
-			<li class="col05">{{ goods.shop_price }}元</li>
+			<li class="col05">{{ goods.goods.shop_price }}元</li>
 			<li class="col06">
 				<div class="num_add">
-					<a href="javascript:;" class="add fl">+</a>
-					<input type="text" class="num_show fl" value="1">
-					<a href="javascript:;" class="minus fl">-</a>
+					<a href="javascript:;" class="add fl" onclick="add_goods({{ goods.goods.id }},{{ goods.goods.shop_price }})">+</a>
+					<input type="text" class="num_show_{{ goods.goods.id }} fl" value="{{ goods.nums }}">
+					<a href="javascript:;" class="minus fl" onclick="sub_goods({{ goods.goods.id }},{{ goods.goods.shop_price }})">-</a>
 				</div>
 			</li>
-			<li class="col07">{{ goods.shop_price }}元</li>
+			<li class="col07" id="co_{{ goods.goods.id }}">{{ goods.goods.shop_price }}元</li>
 			<li class="col08"><a href="javascript:;">删除</a></li>
 		</ul>
 	{% endfor %}
+        <script type="text/javascript">
+            function add_goods(id,price){
+                <!--获取选择的商品个数-->
+                var goods_num = $('.num_show_' + id ).val()
+                <!--使用parseInt方法，将商品个数转化为int类型，并实现加一操作-->
+                $('.num_show_' + id).val(parseInt(goods_num) + 1)
+                <!--计算商品个数的总价-->
+                var total_price = (parseInt(goods_num) + 1) * price
+                $('#co_' + id).html(total_price + '元')
+                <!--将修改的商品数量，同步到session中-->
+                change_session_goods(id, parseInt(goods_num) + 1)
+            }
+
+            function sub_goods(id,price){
+                <!--获取选择的商品个数-->
+                var goods_num = $('.num_show_' + id).val()
+                <!--使用parseInt方法，将商品个数转化为int类型，并实现减一操作-->
+                var new_goods_num = parseInt(goods_num) - 1
+                if(new_goods_num >= 1){
+                    $('.num_show_' + id).val(new_goods_num)
+                    <!--计算商品个数的总价-->
+                    var total_price = new_goods_num * price
+                    $('#co_' + id).html(total_price + '元')
+                    <!--将修改的商品数量，同步到session中-->
+                    change_session_goods(id, parseInt(goods_num) - 1)
+                }
+            }
+
+            function change_session_goods(goods_id, goods_num){
+                <!--修改session中的商品数量-->
+                var csrf = $('input[name="csrfmiddlewaretoken"]').val()
+                $.ajax({
+                    url:'/shopping/change_session_goods/',
+                    type:'POST',
+                    data:{'goods_id': goods_id, 'goods_num': goods_num},
+                    dataType:'json',
+                    headers:{'X-CSRFToken': csrf},
+                    success:function(data){
+                        if(data.code == '200'){
+                            <!--计算价格-->
+                            total_price()
+                        }
+                    }
+                })
+            }
+
+            <!--计算勾选的商品的价格总和-->
+            function total_price(){
+
+                $.get('/shopping/total_price', function(data){
+                    if(data.code == '200'){
+                        $('.total_goods_price').text(data.count)
+                    }
+                })
+            }
+            <!--加载页面的时候，调用计算价格的函数-->
+            total_price()
+
+            <!--商品的勾选-->
+            function change_cart_goods_select(cart_id){
+                var csrf = $('input[name="csrfmiddlewaretoken"]').val()
+                $.ajax({
+                    url:'/shopping/change_cart_goods_select/',
+                    type:'POST',
+                    data:{'cart_id': cart_id},
+                    dataType:'json',
+                    headers:{'X-CSRFToken': csrf},
+                    success:function(data){
+                        if(data.code == '200'){
+                            <!--计算价格-->
+                            total_price()
+                        }
+                    }
+                })
+            }
+        </script>
 
 	<ul class="settlements">
-		<li class="col01"><input type="checkbox" name="" checked=""></li>
+		<li class="col01">
+            <input type="checkbox" name="" checked="">
+        </li>
 		<li class="col02">全选</li>
-		<li class="col03">合计(不含运费)：<span>¥</span><em>42.60</em><br>共计<b>2</b>件商品</li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em class="total_goods_price">0</em><br>共计<b>0</b>件商品</li>
 		<li class="col04"><a href="place_order.html">去结算</a></li>
 	</ul>
-	
+
 {% endblock %}
