@@ -60,8 +60,16 @@ class AuthSessionMiddleware(MiddlewareMixin):
 
         if request.session.get('login_status'):
             # 如果从session中获取到用户的登录状态为True，则同步session中的数据到数据库的购物车表模型中
-            # 获取当前登录系统的用户
+            # 获取当前登录系统的用户，先从request.user中获取，如果获取的user为匿名用户，则再次验证cookie中的ticket值
             user = request.user
+            if not user.id:
+                # 获取的user为AnymouseUser,则继续从cookie中验证ticket
+                ticket = request.COOKIES.get('ticket')
+                if ticket:
+                    user_ticket = UserTicket.objects.filter(ticket=ticket).first()
+                    if datetime.utcnow() < user_ticket.out_time.replace(tzinfo=None):
+                        user = user_ticket.user
+
             # 如果获取到当前登录系统的用户，则同步session中的数据到数据库中
             if user.id:
                 session_goods = request.session.get('goods')

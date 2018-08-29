@@ -94,7 +94,7 @@
                             headers:{'X-CSRFToken': csrf},
                             success:function(data){
                                 if(data.code == '200'){
-                                    s='<a href="#" class="cart_name fl">我的购物车</a>'
+                                    s='<a href="/shopping/cart/" class="cart_name fl">我的购物车</a>'
                                     s+= '<div class="goods_count fl cart_goods_num" id="show_count">' + data.cart_goods_num + '</div>'
                                     $('.guest_cart').html(s)
                                 }

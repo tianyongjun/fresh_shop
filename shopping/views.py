@@ -1,9 +1,12 @@
+from datetime import datetime
+
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 
 from goods.models import Goods
 from shopping.models import ShoppingCart
+from users.models import UserTicket
 
 
 class AddCart(View):
@@ -52,8 +55,18 @@ class AddCart(View):
 class Cart(View):
     def get(self, request, *args, **kwargs):
         # 购物车页面不用区分是否登录了商城，只用在下单的时候，进行判断用户是否登录即可
-        # 如果没有登录，则跳转到登录页面。如果登录了，则直接跳转到支付页面
+        # 下单的时候，判断如果没有登录，则跳转到登录页面。如果登录了，则直接跳转到支付页面
 
+        # 先判断用户是否登录，如果登录则从数据库的购物车表中拿数据,如果登录状态验证失败，则从session中拿数据
+        if request.session.get('login_status'):
+            ticket = request.COOKIES.get('ticket')
+            if ticket:
+                user_ticket = UserTicket.objects.filter(ticket=ticket).first()
+                if datetime.utcnow() < user_ticket.out_time.replace(tzinfo=None):
+                    user = user_ticket.user
+                    shopping = ShoppingCart.objects.filter(user=user)
+                    shop_carts = [i.goods for i in shopping]
+                    return render(request, 'web/cart.html', {'shop_carts': shop_carts})
         # 从session中拿商品的id
         goods = request.session.get('goods')
         shop_carts = []
