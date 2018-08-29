@@ -10,6 +10,16 @@
 {% block extJs %}
     {% load static %}
     <script type="text/javascript" src="{% static 'web/js/jquery-1.12.4.min.js' %}"></script>
+    <script type="text/javascript">
+        <!-- 获取用户的登录用户名 -->
+        $.get('/users/is_login/', function(data){
+            if(data.code == '200'){
+                $('.login_info em').html(data.username)
+                $('.login_btn').remove()
+            }
+        })
+
+    </script>
 {% endblock %}
 
 {% block header %}
@@ -20,7 +30,7 @@
 			<div class="welcome fl">欢迎来到天天生鲜!</div>
 			<div class="fr">
 				<div class="login_info fl" style="display:block;">
-					欢迎您：<em>张 山</em>
+					欢迎您：<em></em>
 					<span>|</span>
 				</div>
 				<div class="login_btn fl">
@@ -32,7 +42,7 @@
 					<span>|</span>
 					<a href="user_center_info.html">用户中心</a>
 					<span>|</span>
-					<a href="cart.html">我的购物车</a>
+					<a href="{% url 'shopping:cart' %}">我的购物车</a>
 					<span>|</span>
 					<a href="user_center_order.html">我的订单</a>
 				</div>
@@ -47,8 +57,8 @@
 			<input type="button" class="input_btn fr" name="" value="搜索">
 		</div>
 		<div class="guest_cart fr">
-			<a href="#" class="cart_name fl">我的购物车</a>
-			<div class="goods_count fl" id="show_count">1</div>
+			<a href="{% url 'shopping:cart' %}" class="cart_name fl">我的购物车</a>
+			<div class="goods_count fl cart_goods_num" id="show_count">0</div>
 		</div>
 	</div>
 

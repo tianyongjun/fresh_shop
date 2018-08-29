@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
 
+from shopping.models import ShoppingCart
 from users.models import UserTicket
 
 
@@ -14,9 +15,9 @@ class AuthMiddleware(MiddlewareMixin):
     def process_request(self, request):
 
         # 不需要验证url地址
-        not_need_login = ['/home/index/', '/home/goods_detail/(.*)', '/goods/(.*)',
-                          '/backweb/(.*)', '/util/upload/(.*)', '/users/(.*)',
-                          '/media/(.*)', '/static/(.*)']
+        not_need_login = ['/home/index/', '/goods/goods_detail/(.*)','/users/login/',
+                          '/users/register/', '/media/(.*)', '/static/(.*)',
+                          '/shopping/add_cart/', '/shopping/cart/']
         # 获取当前访问url的地址
         path = request.path
         # 当访问首页的时候，不需要做登录验证的处理
@@ -46,7 +47,34 @@ class AuthMiddleware(MiddlewareMixin):
             else:
                 # 没有过期，赋值request.user，并且删除多余的认证信息
                 request.user = user_ticket.user
-
                 return None
         else:
             return redirect('users:login')
+
+
+class AuthSessionMiddleware(MiddlewareMixin):
+    """
+    用户的session状态验证
+    """
+    def process_request(self, request):
+
+        if request.session.get('login_status'):
+            # 如果从session中获取到用户的登录状态为True，则同步session中的数据到数据库的购物车表模型中
+            # 获取当前登录系统的用户
+            user = request.user
+            # 如果获取到当前登录系统的用户，则同步session中的数据到数据库中
+            if user.id:
+                session_goods = request.session.get('goods')
+                if session_goods:
+                    # 循环执行同步session数据到数据库，其中goods为列表['商品的id','商品的数量']
+                    for goods in session_goods:
+                        shop_cart = ShoppingCart.objects.filter(goods_id=goods[0], user=user).first()
+                        if not shop_cart:
+                            # 如果购物车中没有该用户对应的商品信息，则创建
+                            ShoppingCart.objects.create(goods_id=goods[0], nums=goods[1], user=user)
+                        else:
+                            # 如果购物车中有该用户对应的商品信息，则判断商品个数是否变化，变化则更新
+                            if shop_cart.nums != goods[1]:
+                                shop_cart.nums == goods[1]
+                                shop_cart.save()
+        return None

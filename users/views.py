@@ -1,9 +1,9 @@
 
 from datetime import datetime, timedelta
 
-from django.contrib.auth.hashers import make_password
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.contrib.auth.hashers import make_password, check_password
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 
@@ -25,6 +25,14 @@ class Login(View):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = User.objects.filter(username=username).first()
+            # 如果验证用户名不正确，则返回登录页面
+            if not user:
+                return redirect('users:login')
+            # 如果验证用户存在，但是密码错误，则返回登录页面
+            if not check_password(password, user.password):
+                return redirect('users:login')
+            # 如果用户验证成，则修改session中的登录状态
+            request.session['login_status'] = True
             # 2. cookie和session的应用
             # 2.1 向cookie中保存ticket参数
             ticket = get_random_ticket()
@@ -45,6 +53,16 @@ class Login(View):
         else:
             # 如果表单验证不成功，则可以从form.errors中获取到验证失败的错误信息
             return render(request, 'web/login.html', {'form': form, 'data': data})
+
+
+class Logout(View):
+
+    def get(self, request, *args, **kwargs):
+        # 注销跳转到首页
+        res = redirect('/')
+        # 删除cookie中的ticket参数
+        res.delete_cookie('ticket')
+        return res
 
 
 class Register(View):
@@ -70,3 +88,8 @@ class Register(View):
             # 如果表单验证不成功，则可以从form.errors中获取到验证失败的错误信息
             return render(request, 'web/register.html', {'form': form, 'data': data})
 
+
+class IsLogin(View):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        return JsonResponse({'code': 200, 'msg': '请求成功', 'username': user.username})

@@ -31,6 +31,8 @@ urlpatterns = [
     path('goods/', include(('goods.urls', 'goods'), namespace='goods')),
     # 生鲜前台地址
     path('home/', include(('home.urls', 'home'), namespace='home')),
+    # 购物车模块
+    path('shopping/', include(('shopping.urls', 'home'), namespace='shopping')),
     # 访问生鲜首页地址
     re_path(r'^$', views.Index.as_view()),
 

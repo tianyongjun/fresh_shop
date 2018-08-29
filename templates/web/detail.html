@@ -51,21 +51,69 @@
 			</div>
 			<div class="goods_num clearfix">
 				<div class="num_name fl">数 量：</div>
+
 				<div class="num_add fl">
 					<input type="text" class="num_show fl" value="1">
-					<a href="javascript:;" class="add fr">+</a>
-					<a href="javascript:;" class="minus fr">-</a>	
+					<a href="javascript:;" class="add fr" onclick="add_goods({{ goods.shop_price }});">+</a>
+					<a href="javascript:;" class="minus fr" onclick="sub_goods({{ goods.shop_price }});">-</a>
 				</div>
+                <!--实现商品的价格动态变化-->
+                <script type="text/javascript">
+                    function add_goods(price){
+                        <!--获取选择的商品个数-->
+                        var goods_num = $('.num_show').val()
+                        <!--使用parseInt方法，将商品个数转化为int类型，并实现加一操作-->
+                        $('.num_show').val(parseInt(goods_num) + 1)
+                        <!--计算商品个数的总价-->
+                        var total_price = (parseInt(goods_num) + 1) * price
+                        $('.total em').html(total_price + '元')
+                    }
+
+                    function sub_goods(price){
+                        <!--获取选择的商品个数-->
+                        var goods_num = $('.num_show').val()
+                        <!--使用parseInt方法，将商品个数转化为int类型，并实现减一操作-->
+                        var new_goods_num = parseInt(goods_num) - 1
+                        if(new_goods_num >= 1){
+                            $('.num_show').val(new_goods_num)
+                            <!--计算商品个数的总价-->
+                            var total_price = new_goods_num * price
+                            $('.total em').html(total_price + '元')
+                        }
+                    }
+
+                    function add_cart(goods_id){
+                        <!--添加到购物车-->
+                        goods_num = $('.num_show').val()
+                        var csrf = $('input[name="csrfmiddlewaretoken"]').val()
+                        $.ajax({
+                            url:'/shopping/add_cart/',
+                            type:'POST',
+                            data:{'goods_id': goods_id, 'goods_num': goods_num},
+                            dataType:'json',
+                            headers:{'X-CSRFToken': csrf},
+                            success:function(data){
+                                if(data.code == '200'){
+                                    s='<a href="#" class="cart_name fl">我的购物车</a>'
+                                    s+= '<div class="goods_count fl cart_goods_num" id="show_count">' + data.cart_goods_num + '</div>'
+                                    $('.guest_cart').html(s)
+                                }
+                            }
+                        })
+
+                    }
+                </script>
 
                 <div class="num_name fl" style="margin-left:50px;">库 存：</div>
 				<div class="num_name fl" style="text-align:center;">
 					{{ goods.goods_nums }}
 				</div>
 			</div>
-			<div class="total">总价：<em>16.80元</em></div>
+			<div class="total">总价：<em>{{ goods.shop_price }}元</em></div>
 			<div class="operate_btn">
 				<a href="javascript:;" class="buy_btn">立即购买</a>
-				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>				
+                {% csrf_token %}
+				<a onclick="add_cart({{ goods.id }});" class="add_cart" id="add_cart">加入购物车</a>
 			</div>
 		</div>
 	</div>
