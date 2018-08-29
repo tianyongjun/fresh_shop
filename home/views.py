@@ -25,10 +25,3 @@ class Index(View):
             goods_all['goods_' + str(goods_type[0])] = data
         return render(request, 'web/index.html', {'goods_all': goods_all, 'goods_categorys': goods_categorys})
 
-
-class GoodsDetail(View):
-    def get(self, request, *args, **kwargs):
-        # 获取商品详情信息
-        goods = Goods.objects.filter(id=kwargs['id']).first()
-        return render(request, 'web/detail.html', {'goods': goods})
-

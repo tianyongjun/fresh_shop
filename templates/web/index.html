@@ -96,8 +96,8 @@
                 <ul class="goods_list fl">
                     {% for good in value %}
                         <li>
-                            <h4><a href="{% url 'home:goods_detail' good.id %}">{{ good.name }}</a></h4>
-                            <a href="{% url 'home:goods_detail' good.id %}"><img src="/media/{{ good.goods_front_image }}"></a>
+                            <h4><a href="{% url 'goods:goods_detail' good.id %}">{{ good.name }}</a></h4>
+                            <a href="{% url 'goods:goods_detail' good.id %}"><img src="/media/{{ good.goods_front_image }}"></a>
                             <div class="prize">¥ {{ good.shop_price }}</div>
                         </li>
                     {% endfor %}

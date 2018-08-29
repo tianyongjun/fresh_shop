@@ -17,11 +17,11 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 
 from django.contrib.staticfiles.urls import static
+from django.views.static import serve
 
 from fresh_shop import settings
 from home import views
 
-from utils.upload_image import upload_image
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,12 +31,11 @@ urlpatterns = [
     path('goods/', include(('goods.urls', 'goods'), namespace='goods')),
     # 生鲜前台地址
     path('home/', include(('home.urls', 'home'), namespace='home')),
-    # 生鲜后台地址
-    path('backweb/', include(('backweb.urls', 'backweb'), namespace='backweb')),
     # 访问生鲜首页地址
     re_path(r'^$', views.Index.as_view()),
-    # kindeditor编辑器上传图片地址
-    re_path(r'^util/upload/(?P<dir_name>[^/]+)$', upload_image, name='upload_image'),
+
+    # 配置media路径
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
 
 # 配置media访问路径

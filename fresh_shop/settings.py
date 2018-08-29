@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'utils.UserAuthMiddleware.AuthMiddleware',
 ]
 
 ROOT_URLCONF = 'fresh_shop.urls'
@@ -133,7 +134,7 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = 'E:\my_workspace\/fresh_shop_media\media'
 
 # 分页条数
 PAGE_NUMBER = 10
