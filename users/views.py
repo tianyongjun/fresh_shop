@@ -95,3 +95,8 @@ class IsLogin(View):
     def get(self, request, *args, **kwargs):
         user = request.user
         return JsonResponse({'code': 200, 'msg': '请求成功', 'username': user.username})
+
+
+class UserCenterOrder(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'web/user_center_info.html')

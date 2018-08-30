@@ -1,7 +1,9 @@
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 
+from fresh_shop.settings import PAGE_NUMBER
 from order.models import OrderInfo, OrderGoods
 from shopping.models import ShoppingCart
 from utils.functions import get_order_sn
@@ -54,3 +56,24 @@ class Order(View):
         return JsonResponse({'code': 200, 'msg': '请求成功'})
 
 
+class UserOrder(View):
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        # 获取分页
+        try:
+            # 如果page参数不能转化为int类型，则异常，默认page为1
+            page = int(request.GET.get('page', 1))
+        except:
+            page = 1
+        # 获取当前用户所有的订单信息
+        order_info = OrderInfo.objects.filter(user=user)
+        paginator = Paginator(order_info, PAGE_NUMBER)
+        order_info = paginator.page(page)
+        order_status = OrderInfo.ORDER_STATUS
+        return render(request, 'web/user_center_order.html', {'order_info': order_info, 'order_status': order_status})
+
+
+class UserOrderSite(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'web/user_center_site.html')
