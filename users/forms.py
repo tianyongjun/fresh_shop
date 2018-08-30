@@ -53,3 +53,11 @@ class UserLoginForm(forms.Form):
             raise forms.ValidationError({'password':'密码错误'})
 
         return self.cleaned_data
+
+
+class UserAddressForm(forms.Form):
+    # 用户地址保存的表单验证
+    signer_name = forms.CharField(required=True, error_messages={'required': '收件人必填'})
+    address = forms.CharField(required=True, error_messages={'required': '详细地址必填'})
+    signer_mobile = forms.CharField(required=True, error_messages={'required': '收件人手机号码必填'})
+    signer_postcode = forms.CharField(required=True, error_messages={'required': '邮编必填'})

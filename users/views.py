@@ -7,8 +7,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 
-from users.forms import UserRegisterForm, UserLoginForm
-from users.models import User, UserTicket
+from users.forms import UserRegisterForm, UserLoginForm, UserAddressForm
+from users.models import User, UserTicket, UserAddress
 from utils.functions import get_random_ticket
 
 
@@ -100,3 +100,21 @@ class IsLogin(View):
 class UserCenterOrder(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'web/user_center_info.html')
+
+
+class Address(View):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        user_address = UserAddress.objects.filter(user=user).order_by('-id').first()
+
+        return render(request, 'web/user_center_site.html', {'user_address': user_address})
+
+    def post(self, request, *args, **kwargs):
+        form = UserAddressForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            address_info = form.cleaned_data
+            UserAddress.objects.create(**address_info, user=user)
+            return redirect('users:user_address')
+        else:
+            return render(request, 'web/user_center_site.html',{'form': form})

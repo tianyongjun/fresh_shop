@@ -13,5 +13,7 @@ urlpatterns = [
     # 登录验证，获取登录系统的用户
     path('is_login/', views.IsLogin.as_view(), name='is_login'),
     # 个人信息中心
-    path('user_center_order', views.UserCenterOrder.as_view(), name='user_center_order'),
+    path('user_center_order/', views.UserCenterOrder.as_view(), name='user_center_order'),
+    # 收货地址
+    path('user_address/', views.Address.as_view(), name='user_address'),
 ]
