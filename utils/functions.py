@@ -22,3 +22,13 @@ def is_login(request):
             user = user_ticket.user
             return user
     return None
+
+
+def get_order_sn():
+    # 获取随机订单号字符串
+    s = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
+    order_sn = ''
+    for i in range(20):
+        order_sn += random.choice(s)
+    order_sn += datetime.now().strftime('%Y%m%d%H%M%S')
+    return order_sn

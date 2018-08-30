@@ -17,25 +17,48 @@
 		<li class="col06">操作</li>
 	</ul>
     {% csrf_token %}
-	{% for goods in shop_carts %}
+    {% if shop_carts %}
+        {% for goods in shop_carts %}
 
-		<ul class="cart_list_td clearfix">
-			<li class="col01"><input onchange="change_cart_goods_select({{ goods.id }})" type="checkbox" name=""{% if goods.is_select %} checked {% endif %}></li>
-			<li class="col02"><img src="/media/{{ goods.goods.goods_front_image }}"></li>
-			<li class="col03">{{ goods.goods.name }}<br><em>{{ goods.goods.shop_price }}元/500g</em></li>
-			<li class="col04">500g</li>
-			<li class="col05">{{ goods.goods.shop_price }}元</li>
-			<li class="col06">
-				<div class="num_add">
-					<a href="javascript:;" class="add fl" onclick="add_goods({{ goods.goods.id }},{{ goods.goods.shop_price }})">+</a>
-					<input type="text" class="num_show_{{ goods.goods.id }} fl" value="{{ goods.nums }}">
-					<a href="javascript:;" class="minus fl" onclick="sub_goods({{ goods.goods.id }},{{ goods.goods.shop_price }})">-</a>
-				</div>
-			</li>
-			<li class="col07" id="co_{{ goods.goods.id }}">{{ goods.goods.shop_price }}元</li>
-			<li class="col08"><a href="javascript:;">删除</a></li>
-		</ul>
-	{% endfor %}
+            <ul class="cart_list_td clearfix">
+                <li class="col01"><input onchange="change_cart_goods_select({{ goods.id }})" type="checkbox" name=""{% if goods.is_select %} checked {% endif %}></li>
+                <li class="col02"><img src="/media/{{ goods.goods.goods_front_image }}"></li>
+                <li class="col03">{{ goods.goods.name }}<br><em>{{ goods.goods.shop_price }}元/500g</em></li>
+                <li class="col04">500g</li>
+                <li class="col05">{{ goods.goods.shop_price }}元</li>
+                <li class="col06">
+                    <div class="num_add">
+                        <a href="javascript:;" class="add fl" onclick="add_goods({{ goods.goods.id }},{{ goods.goods.shop_price }})">+</a>
+                        <input type="text" class="num_show_{{ goods.goods.id }} fl" value="{{ goods.nums }}">
+                        <a href="javascript:;" class="minus fl" onclick="sub_goods({{ goods.goods.id }},{{ goods.goods.shop_price }})">-</a>
+                    </div>
+                </li>
+                <li class="col07" id="co_{{ goods.goods.id }}">{{ goods.goods.shop_price }}元</li>
+                <li class="col08"><a href="javascript:;">删除</a></li>
+            </ul>
+        {% endfor %}
+    {% endif %}
+    {% if goods %}
+        {% for good in goods %}
+
+            <ul class="cart_list_td clearfix">
+                <li class="col01"><input onchange="change_cart_goods_select({{ good.id }})" type="checkbox" name=""{% if goods.is_select %} checked {% endif %}></li>
+                <li class="col02"><img src="/media/{{ good.goods_front_image }}"></li>
+                <li class="col03">{{ good.name }}<br><em>{{ good.shop_price }}元/500g</em></li>
+                <li class="col04">500g</li>
+                <li class="col05">{{ good.shop_price }}元</li>
+                <li class="col06">
+                    <div class="num_add">
+                        <a href="javascript:;" class="add fl" onclick="add_goods({{ good.id }},{{ good.shop_price }})">+</a>
+                        <input type="text" class="num_show_{{ good.id }} fl" value="{{ good.nums }}">
+                        <a href="javascript:;" class="minus fl" onclick="sub_goods({{ good.id }},{{ good.shop_price }})">-</a>
+                    </div>
+                </li>
+                <li class="col07" id="co_{{ good.id }}">{{ good.shop_price }}元</li>
+                <li class="col08"><a href="javascript:;">删除</a></li>
+            </ul>
+        {% endfor %}
+    {% endif %}
         <script type="text/javascript">
             function add_goods(id,price){
                 <!--获取选择的商品个数-->
@@ -119,7 +142,7 @@
         </li>
 		<li class="col02">全选</li>
 		<li class="col03">合计(不含运费)：<span>¥</span><em class="total_goods_price">0</em><br>共计<b>0</b>件商品</li>
-		<li class="col04"><a href="place_order.html">去结算</a></li>
+		<li class="col04"><a href="{% url 'order:order' %}">去结算</a></li>
 	</ul>
 
 {% endblock %}

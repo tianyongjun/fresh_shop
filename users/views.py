@@ -58,6 +58,8 @@ class Login(View):
 class Logout(View):
 
     def get(self, request, *args, **kwargs):
+        # 设置session中用户的登录状态为false
+        request.session['login_status'] = False
         # 注销跳转到首页
         res = redirect('/')
         # 删除cookie中的ticket参数

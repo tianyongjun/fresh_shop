@@ -70,9 +70,9 @@ class Cart(View):
         if goods:
             # 如果session中存在已加入的商品，则获取商品的id
             goods_id = [good[0] for good in goods]
-            shop_carts = ShoppingCart.objects.filter(goods_id__in=goods_id)
+            goods = Goods.objects.filter(id__in=goods_id)
 
-        return render(request, 'web/cart.html', {'shop_carts': shop_carts})
+        return render(request, 'web/cart.html', {'goods': goods})
 
 
 class ChangeSessionGoods(View):
