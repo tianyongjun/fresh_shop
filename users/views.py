@@ -105,9 +105,9 @@ class UserCenterOrder(View):
 class Address(View):
     def get(self, request, *args, **kwargs):
         user = request.user
-        user_address = UserAddress.objects.filter(user=user).order_by('-id').first()
+        user_addresses = UserAddress.objects.filter(user=user).order_by('-id').first()
 
-        return render(request, 'web/user_center_site.html', {'user_address': user_address})
+        return render(request, 'web/user_center_site.html', {'user_addresses': user_addresses})
 
     def post(self, request, *args, **kwargs):
         form = UserAddressForm(request.POST)

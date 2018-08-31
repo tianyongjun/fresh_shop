@@ -6,6 +6,7 @@ from django.views import View
 from fresh_shop.settings import PAGE_NUMBER
 from order.models import OrderInfo, OrderGoods
 from shopping.models import ShoppingCart
+from users.models import UserAddress
 from utils.functions import get_order_sn
 
 
@@ -18,11 +19,16 @@ class Order(View):
         shop_carts = ShoppingCart.objects.filter(user=user, is_select=True)
         for shop_cart in shop_carts:
             shop_cart.count = shop_cart.nums * shop_cart.goods.shop_price
-        return render(request, 'web/place_order.html', {'shop_carts': shop_carts})
+        # 获取订单地址
+        addresses = UserAddress.objects.filter(user=user)
+        return render(request, 'web/place_order.html', {'shop_carts': shop_carts, 'addresses': addresses})
 
     def post(self, request, *args, **kwargs):
         # 下单
         user = request.user
+        # 获取收货人的地址id
+        address_id = request.POST.get('address_id')
+        user_address = UserAddress.objects.filter(id=address_id).first()
         # 获取随机生成的订单号
         order_sn = get_order_sn()
         # 计算下单的商品的价格总和
@@ -33,7 +39,9 @@ class Order(View):
             order_goods_id.append(shop_cart.goods_id)
             order_mount += shop_cart.nums * shop_cart.goods.shop_price
         # 创建订单
-        order_info = OrderInfo.objects.create(user=user,order_sn=order_sn, order_mount=order_mount)
+        order_info = OrderInfo.objects.create(user=user,order_sn=order_sn,
+                                              order_mount=order_mount, address=user_address.address,
+                                              signer_name=user_address.signer_name, signer_mobile=user_address.signer_mobile)
         # 创建订单和商品之间的详情关系
         for cart in shop_carts:
             OrderGoods.objects.create(order=order_info, goods=cart.goods, goods_nums=cart.nums)
@@ -76,4 +84,8 @@ class UserOrder(View):
 
 class UserOrderSite(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'web/user_center_site.html')
+        user = request.user
+        user_addresses = UserAddress.objects.filter(user=user).order_by('-id')
+
+        return render(request, 'web/user_center_site.html', {'user_addresses': user_addresses})
+

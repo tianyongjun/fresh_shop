@@ -35,6 +35,8 @@ urlpatterns = [
     path('shopping/', include(('shopping.urls', 'home'), namespace='shopping')),
     # 订单模块
     path('order/', include(('order.urls', 'order'), namespace='order')),
+    # 支付宝支付模块
+    path('pay/', include(('pay.urls', 'pay'), namespace='pay')),
     # 访问生鲜首页地址
     re_path(r'^$', views.Index.as_view()),
 

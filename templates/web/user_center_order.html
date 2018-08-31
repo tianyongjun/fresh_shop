@@ -17,6 +17,7 @@
 			</ul>
 		</div>
 		<div class="right_content clearfix">
+            {% csrf_token %}
             {% for o_info in order_info %}
 				<h3 class="common_title2">全部订单</h3>
 				<ul class="order_list_th w978 clearfix">
@@ -56,7 +57,7 @@
 							<td width="15%">
                                 <a href="#" class="oper_btn">
                                     {% if o_info.pay_status == 'paying' %}
-                                        去付款
+                                        <a href="{% url 'pay:pay_order' %}?order_id={{ o_info.id }}">去付款</a>
                                     {% endif %}
                                     {% if o_info.pay_status == 'TRADE_SUCCESS' %}
                                         成功
@@ -67,6 +68,7 @@
 					</tbody>
 				</table>
             {% endfor %}
+
 
 				<div class="pagenation">
                     {% if page.has_previous %}
